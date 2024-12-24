@@ -41,7 +41,7 @@ auth.get("/Signin", async (req, res) => {
     }
 
     // Generate a token if authentication is successful
-    const token = generateToken(user.email);
+    const token = generateToken({"username":user.email,"password":password});
 
     res.status(200).json({
       message: "User logged in successfully",
