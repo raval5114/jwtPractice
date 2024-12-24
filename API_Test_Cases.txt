@@ -1,0 +1,102 @@
+
+Authentication APIs
+
+1. POST /auth/Signup
+Purpose: Register a new user.
+Manual Tests:
+- Test with valid email and password (success case).(done)
+- Test with invalid email format (error case).(done)
+- Test with missing email or password in the request body.(done)
+- Test with an already registered email.(done)
+- Test with a very weak password (e.g., less than required characters).
+
+2. GET /auth/Signin
+Purpose: Log in an existing user.
+Manual Tests:
+- Test with correct email and password (success case).done
+- Test with incorrect email or password (error case).done
+- Test with missing email or password in the request body.done
+- Test login for a user who hasn’t registered.done
+
+3. POST /auth/Signout
+Purpose: Sign out the logged-in user.
+Manual Tests:
+- Test sign-out for a logged-in user with a valid JWT token.
+- Test sign-out without providing a token.
+- Test sign-out after the token has expired.
+
+Account/Bank Details Handling APIs
+
+1. POST /banks/accounts
+Purpose: Add a new account for the authenticated user.
+Manual Tests:
+- Test with all valid account details (success case).Done
+- Test with missing fields in the account details (e.g., accountName, accountNumber).Done
+- Test with invalid account number format (e.g., non-numeric values).Done
+- Test with a valid JWT token for a different registered email.Done
+- Test without providing a token.Done
+
+2. GET /banks/accounts
+Purpose: Fetch account details for the authenticated user.
+Manual Tests:
+- Test with a valid token linked to an account (success case).Done
+- Test with a valid token but no accounts linked.Done
+- Test without providing a token (error case).Done
+
+3. GET /banks/accounts/all
+Purpose: Fetch details of all accounts in the database.
+Manual Tests:
+- Test with a valid token (admin-level access if applicable).Done
+- Test with a regular user's token (check access control).Done
+- Test without providing a token.Done
+
+4. PATCH /banks/banks
+Purpose: Add bank details to the authenticated user's account.
+Manual Tests:
+- Test with valid bankType and details.Done
+- Test with missing or invalid bankType.Done
+- Test with valid data but for a user without linked accounts.Done
+- Test without providing a token.Done
+
+5. GET /banks/banks
+Purpose: Get bank details for the authenticated user's account.
+Manual Tests:
+- Test with a valid token linked to an account with bank details.Done
+- Test with a valid token but no bank details linked.Done
+- Test without providing a token.Done
+
+Transaction Details and Handling APIs
+
+1. POST /transactions/
+Purpose: Add a new transaction record for the authenticated user.
+Manual Tests:
+- Test with valid email and transactionList (success case).Done
+- Test with a missing transactionList.Done
+- Test with invalid transaction details (e.g., missing type or amount).Done
+- Test with a valid token but no linked accounts.Done
+- Test without providing a token.Done
+
+2. PATCH /transactions/
+Purpose: Add a new transaction to an existing account.
+Manual Tests:
+- Test with valid transaction data (success case).Done
+- Test with missing bankType in the update payload.Done
+- Test with invalid data in the transaction list (e.g., negative amounts).Done
+- Test with a valid token but no linked transactions.Done
+- Test without providing a token.Done
+
+3. GET /transactions/
+Purpose: Fetch all transaction records from the database.
+Manual Tests:
+- Test with a valid token and existing transaction records.Done
+- Test with a valid token but no transaction records.Done
+- Test without providing a token.Done
+
+Payment Handling 
+1. PATCH GET/payment/
+Notes:
+- For all endpoints, ensure to test HTTP status codes (e.g., 200, 400, 401, 404, 500).Done
+- Validate error messages to ensure they are clear and helpful.Done
+- Test with boundary cases, such as empty strings, overly large inputs, or malformed JSON.Done
+- Verify authentication and authorization mechanisms for each endpoint, especially for sensitive operations like adding accounts or fetching all transactions.Done
+- For optional fields, confirm that the API handles their absence gracefully.Done

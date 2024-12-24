@@ -1,0 +1,20 @@
+    Authentication APIs:
+    POST localhost:3000/auth/Singup --Register 
+    GET  localhost:3000/auth/Signin --Login
+    POST localhost:3000/auth/Signout --Sign Out
+
+    Account/Bank Details handling APIs:
+    POST  localhost:3000/banks/accounts --Add new Accounts (in prescribed JWT token(Register Email)) 
+    GET   localhost:3000/banks/accounts --Fetch the Details of Accounts (in prescribed JWT token(Register Email))
+    GET   localhost:3000/banks/accounts/all --fetch details of all Accounts in Database
+    PATCH localhost:3000/banks/banks -- Adding Bank details in Prescribed email(JWT token)
+    GET   localhost:3000/banks/banks -- Getting Bank details in Prescribed email(JWT token)	
+
+    Transaction Details and Handling APIs:
+    POST  localhost:3000/transactions/ --Add a new Transaction Account
+    PATCH localhost:3000/transactions/ --Add a new Transaction
+    GET   localhost:3000/transactions/ --fetch all Transactions records
+
+    Payment APIs
+    PATCH localhost:3000/payment/payViaMobile ---Payment Via MobileNumber
+    PATCH localhost:3000/payment/payViaCard ---Payment Via Card Number
