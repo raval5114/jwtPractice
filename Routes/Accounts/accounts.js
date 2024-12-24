@@ -9,7 +9,7 @@ const accounts = express.Router();
 
 // POST /accounts - Add Account Details
 accounts.post("/accounts", authenticateToken, async (req, res) => {
-  const decoded = req.user; // Decoded JWT token (contains user details)
+  const decoded = req.user.email; // Decoded JWT token (contains user details)
 
   console.log(`Adding Account Details for User: ${decoded}`);
 
@@ -47,7 +47,7 @@ accounts.post("/accounts", authenticateToken, async (req, res) => {
 // GET /accounts - Get Account Details
 accounts.get("/accounts", authenticateToken, async (req, res) => {
   try {
-    const decoded = req.user;
+    const decoded = req.user.email;
     const acc_User = await Accounts.findOne({ email: decoded });
     res
       .status(200)
@@ -67,7 +67,7 @@ accounts.get("/accounts/all", (req, res) => {
   res.send("Every Account Details Retrieved");
 });
 accounts.patch("/banks", authenticateToken, async (req, res) => {
-  const decoded = req.user; // Decoded JWT token contains user details
+  const decoded = req.user.email; // Decoded JWT token contains user details
   const { bankName, accountNumber,netBanking,ifscCode, balance ,} = req.body;
 
   try {
@@ -98,7 +98,7 @@ accounts.patch("/banks", authenticateToken, async (req, res) => {
 });
 
 accounts.get("/banks",authenticateToken,async(req,res) => {
-    const decoded = req.user;
+    const decoded = req.user.email;
 
     try{
          const user = await Accounts.findOne({email:decoded});   
