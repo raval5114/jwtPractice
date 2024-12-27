@@ -12,7 +12,8 @@ router.post("/users", async (req, res) => {
     res
       .status(201)
       .json({ message: "User Created Successfully", user: savedUser });
-  } catch (error) {
+  } 
+  catch (error) {
     console.error("Error creating user:", error); // Log the error
     res
       .status(400)
