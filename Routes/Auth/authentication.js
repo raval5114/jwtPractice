@@ -47,7 +47,7 @@ auth.post("/Signin", async (req, res) => {
     res.status(200).json({
       message: "User logged in successfully",
       token: token,
-      user: users,
+      user: user,
     });
   } catch (err) {
     console.error("Error during sign-in:", err);
