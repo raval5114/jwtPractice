@@ -10,6 +10,7 @@ const {
 } = require("../../Middlewares/jwt_auth_tkn");
 
 const auth = express.Router(); // Creating a new router instance for authentication-related routes
+
 function hasherInSHAser(password) {
   return crypto.createHash("sha256").update(password).digest("hex");
 }
@@ -41,12 +42,12 @@ auth.post("/Signin", async (req, res) => {
     }
 
     // Generate a token if authentication is successful
-    const token = generateToken({"username":user.email,"password":password});
+    const token = generateToken({ username: user.email, password: password });
 
     res.status(200).json({
       message: "User logged in successfully",
       token: token,
-      user: users
+      user: users,
     });
   } catch (err) {
     console.error("Error during sign-in:", err);
@@ -151,6 +152,6 @@ auth.post("/Signup", async (req, res) => {
   1. user login -- for generating token 
   2. then user details for --for decoding that token
 */
-// 
+//
 // Exporting the router to be used in the main application
 module.exports = auth;
