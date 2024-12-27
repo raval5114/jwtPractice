@@ -14,7 +14,7 @@ function hasherInSHAser(password) {
   return crypto.createHash("sha256").update(password).digest("hex");
 }
 // Route to handle user Sign-In - login
-auth.get("/Signin", async (req, res) => {
+auth.post("/Signin", async (req, res) => {
   const { emailOrMobile, password } = req.body;
 
   // Check if both email/mobile and password are provided
@@ -46,12 +46,7 @@ auth.get("/Signin", async (req, res) => {
     res.status(200).json({
       message: "User logged in successfully",
       token: token,
-      user: {
-        id: user._id,
-        name: `${user.firstname} ${user.lastname}`,
-        email: user.email,
-        mobile: user.mobile,
-      },
+      user: user
     });
   } catch (err) {
     console.error("Error during sign-in:", err);
