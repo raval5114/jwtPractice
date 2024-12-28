@@ -1,5 +1,4 @@
 const express = require("express"); // Importing Express for routing
-const bcrypt = require("bcrypt");
 const crypto = require("crypto"); // Importing the crypto module
 
 const User = require("../Model/model"); // Importing the User model for database operations
