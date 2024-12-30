@@ -27,7 +27,7 @@ auth.post("/Signin", async (req, res) => {
   try {
     // Find the user by email or mobile
     const user = await User.findOne({
-      $or: [{ email: emailOrMobile }, { mobile: emailOrMobile }],
+      $or: [{ email: emailOrMobile }, { mobileNo: emailOrMobile }],
     });
 
     if (!user) {
@@ -101,10 +101,23 @@ auth.post("/Signup", async (req, res) => {
       .json({ message: "Invalid mobile number. Must be 10 digits." });
   }
 
-  // Validate date of birth (optional: can use libraries like `moment` for advanced validation)
-  if (isNaN(Date.parse(dob))) {
-    return res.status(400).json({ message: "Invalid date of birth" });
+  // Validate and format date of birth
+  const isValidDate = (dateStr) => {
+    const [day, month, year] = dateStr.split('/');
+    const date = new Date(`${year}-${month}-${day}`);
+    return !isNaN(date.getTime());
+  };
+
+  if (!isValidDate(dob)) {
+    return res.status(400).json({ message: "Invalid date of birth format. Use dd/mm/yyyy" });
   }
+
+  const formatDateToISO = (dateStr) => {
+    const [day, month, year] = dateStr.split('/');
+    return new Date(`${year}-${month}-${day}`).toISOString();
+  };
+
+  const formattedDob = formatDateToISO(dob);
 
   try {
     // Check if email is already registered
@@ -121,10 +134,11 @@ auth.post("/Signup", async (req, res) => {
       firstname,
       lastname,
       email,
-      dob: new Date(dob), // Ensure dob is stored as a Date object
+      dob: formattedDob, // Save as ISO string
       password: hashedPassword,
       mobile,
     });
+
     const savedUser = await newUser.save();
 
     // Respond with the saved user details (excluding sensitive information)
@@ -135,13 +149,12 @@ auth.post("/Signup", async (req, res) => {
         name: `${savedUser.firstname} ${savedUser.lastname}`,
         email: savedUser.email,
         mobile: savedUser.mobile,
+        dob: dob, // Respond with the original format (dd/mm/yyyy)
       },
     });
   } catch (e) {
     console.error("Error during sign-up:", e);
-    res
-      .status(500)
-      .json({ message: "Internal Server Error", error: e.message });
+    res.status(500).json({ message: "Internal Server Error", error: e.message });
   }
 });
 

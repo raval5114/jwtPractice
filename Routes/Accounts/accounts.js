@@ -15,8 +15,8 @@ accounts.post("/accounts", authenticateToken, async (req, res) => {
 
   try {
     // Extract account details from the request body
-    const {accountHolderName, mobileNo} = req.body;
-      console.log("\n",accountHolderName,"\n");
+    const { accountHolderName, mobileNo } = req.body;
+    console.log("\n", accountHolderName, "\n");
     // Ensure all required fields are provided (email, accountHolderName, mobileno)
     if (!accountHolderName || !mobileNo) {
       return res.status(400).json({ error: "Missing required fields." });
@@ -27,15 +27,13 @@ accounts.post("/accounts", authenticateToken, async (req, res) => {
       email: decoded, // From request body
       accountHolderName: accountHolderName,
       mobileno: mobileNo,
-      banks:[], // Empty array if no banks provided
+      banks: [], // Empty array if no banks provided
     });
 
     // Save the new account to the database
     await newAccount.save();
 
-    res
-      .status(200)
-      .send({ message: "Account Details Added", user: decoded });
+    res.status(200).send({ message: "Account Details Added", user: decoded });
   } catch (e) {
     console.error(e);
     return res
@@ -68,7 +66,7 @@ accounts.get("/accounts/all", (req, res) => {
 });
 accounts.patch("/banks", authenticateToken, async (req, res) => {
   const decoded = req.user.email; // Decoded JWT token contains user details
-  const { bankName, accountNumber,netBanking,ifscCode, balance ,} = req.body;
+  const { bankName, accountNumber, netBanking, ifscCode, balance } = req.body;
 
   try {
     // Find the user account by their email or another unique identifier
@@ -79,7 +77,7 @@ accounts.patch("/banks", authenticateToken, async (req, res) => {
     }
 
     // Add new bank details to the `banks` array
-    const newBank = { bankName,netBanking,accountNumber, ifscCode, balance};
+    const newBank = { bankName, netBanking, accountNumber, ifscCode, balance };
     acc_User.banks.push(newBank);
 
     // Save the updated account back to the database
@@ -97,21 +95,55 @@ accounts.patch("/banks", authenticateToken, async (req, res) => {
   }
 });
 
-accounts.get("/banks",authenticateToken,async(req,res) => {
-    const decoded = req.user.email;
+accounts.post("/banks", async (req, res) => {
+  const { mobileno, accountNumber, ifscCode } = req.body;
 
-    try{
-         const user = await Accounts.findOne({email:decoded});   
-        res.status(200).json({
-          message:"Bank Details of User",
-          bankDetails:user
-        })
-      }
-    catch(e)
-    {
-      console.error(e);
-      res.status(500).json({message:"Internal Server Error",error:e.message});
+  // Validate request fields
+  if (!mobileno || !accountNumber || !ifscCode) {
+    return res.status(400).json({
+      message: "Invalid request. Mobile number, account number, and IFSC code are required.",
+    });
+  }
+
+  try {
+    // Query to find user and bank details
+    const user = await Accounts.findOne({
+      mobileno: mobileno,
+      banks: {
+        $elemMatch: {
+          accountNumber: accountNumber,
+          ifscCode: ifscCode,
+        },
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "No user found with the provided bank details.",
+      });
     }
+
+    // Extract the matched bank details
+    const matchedBank = user.banks.find(
+      (bank) => bank.accountNumber === accountNumber && bank.ifscCode === ifscCode
+    );
+
+    res.status(200).json({
+      message: "Bank Details of User",
+      bankDetails: {
+        accountHolderName: user.accountHolderName,
+        email: user.email,
+        bank: matchedBank,
+      },
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({
+      message: "Internal Server Error",
+      error: e.message,
+    });
+  }
 });
+
 
 module.exports = accounts;
