@@ -8,7 +8,7 @@ const { decode } = require("jsonwebtoken");
 const accounts = express.Router();
 
 // POST /accounts - Add Account Details
-accounts.post("/accounts", authenticateToken, async (req, res) => {
+accounts.post("/accounts", authenticateToken, async (req,res) => {
   const decoded = req.user.email; // Decoded JWT token (contains user details)
 
   console.log(`Adding Account Details for User: ${decoded}`);

@@ -11,6 +11,7 @@ const auth = express.Router(); // Creating a new router instance for authenticat
 function hasherInSHAser(password) {
   return crypto.createHash("sha256").update(password).digest("hex");
 }
+
 // Route to handle user Sign-In - login
 auth.post("/Signin", async (req, res) => {
   const { emailOrMobile, password } = req.body;
@@ -51,25 +52,35 @@ auth.post("/Signin", async (req, res) => {
       .json({ message: "Internal Server Error", error: err.message });
   }
 });
+//getting values of users from token
 auth.get("/dashboard", async (req, res) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1]; // Correct token extraction
-
-  if (!token) {
-    return res.status(401).json({ message: "Access Denied! Token is required." });
-  }
-
   try {
-    const decoded = jwtVerifyToken(token); // Ensure this function properly verifies JWTs
-    const user = await User.findOne({ email: decoded.email }); // Use correct property
+    const authHeader = req.headers["authorization"];
+    if (!authHeader) {
+      return res.status(401).json({ message: "Access Denied! Token is required." });
+    }
 
+    const token = authHeader.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "Malformed Authorization header." });
+    }
+
+    // Verify JWT token
+    const decoded = jwtVerifyToken(token);
+    if (!decoded || !decoded.email) {
+      return res.status(403).json({ message: "Invalid or expired token." });
+    }
+
+    // Fetch user
+    const user = await User.findOne({ email: decoded.email });
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
 
     res.json({ message: "Token Verified", user });
   } catch (err) {
-    res.status(403).json({ message: "Invalid or expired token." });
+    console.error("JWT Verification Error:", err.message);
+    return res.status(403).json({ message: "Invalid or expired token." });
   }
 });
 
