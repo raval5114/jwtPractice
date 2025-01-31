@@ -1,4 +1,4 @@
-    Authentication APIs:
+        Authentication APIs:
     POST localhost:3000/auth/Singup --Register 
     GET  localhost:3000/auth/Signin --Login
     POST localhost:3000/auth/Signout --Sign Out

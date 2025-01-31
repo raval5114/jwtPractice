@@ -1,10 +1,8 @@
 const express = require("express"); // Importing Express for routing
 const crypto = require("crypto"); // Importing the crypto module
-
 const User = require("../Model/model"); // Importing the User model for database operations
 const {
   generateToken,
-  authenticateToken,
   jwtVerifyToken,
 } = require("../../Middlewares/jwt_auth_tkn");
 
@@ -23,11 +21,10 @@ auth.post("/Signin", async (req, res) => {
       .status(400)
       .json({ message: "Email/Mobile and Password are required." });
   }
-
   try {
     // Find the user by email or mobile
     const user = await User.findOne({
-      $or: [{ email: emailOrMobile }, { mobileNo: emailOrMobile }],
+      $or: [{ email: emailOrMobile }, { mobile: emailOrMobile }],
     });
 
     if (!user) {
@@ -35,24 +32,44 @@ auth.post("/Signin", async (req, res) => {
     }
 
     // Validate the password using custom hashing
-    const hashedPassword = hasherInSHAser(password); // Custom password hashing function
+    const hashedPassword = hasherInSHAser(password); 
+    // Custom password hashing function
     if (hashedPassword !== user.password) {
       return res.status(401).json({ message: "Invalid credentials." });
     }
 
     // Generate a token if authentication is successful
-    const token = generateToken({ username: user.email, password: password });
-
+    const token = generateToken({ email: user.email, password: password });
     res.status(200).json({
       message: "User logged in successfully",
       token: token,
-      user: user,
     });
   } catch (err) {
     console.error("Error during sign-in:", err);
     res
       .status(500)
       .json({ message: "Internal Server Error", error: err.message });
+  }
+});
+auth.get("/dashboard", async (req, res) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1]; // Correct token extraction
+
+  if (!token) {
+    return res.status(401).json({ message: "Access Denied! Token is required." });
+  }
+
+  try {
+    const decoded = jwtVerifyToken(token); // Ensure this function properly verifies JWTs
+    const user = await User.findOne({ email: decoded.email }); // Use correct property
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    res.json({ message: "Token Verified", user });
+  } catch (err) {
+    res.status(403).json({ message: "Invalid or expired token." });
   }
 });
 
@@ -103,17 +120,19 @@ auth.post("/Signup", async (req, res) => {
 
   // Validate and format date of birth
   const isValidDate = (dateStr) => {
-    const [day, month, year] = dateStr.split('/');
+    const [day, month, year] = dateStr.split("/");
     const date = new Date(`${year}-${month}-${day}`);
     return !isNaN(date.getTime());
   };
 
   if (!isValidDate(dob)) {
-    return res.status(400).json({ message: "Invalid date of birth format. Use dd/mm/yyyy" });
+    return res
+      .status(400)
+      .json({ message: "Invalid date of birth format. Use dd/mm/yyyy" });
   }
 
   const formatDateToISO = (dateStr) => {
-    const [day, month, year] = dateStr.split('/');
+    const [day, month, year] = dateStr.split("/");
     return new Date(`${year}-${month}-${day}`).toISOString();
   };
 
@@ -154,7 +173,9 @@ auth.post("/Signup", async (req, res) => {
     });
   } catch (e) {
     console.error("Error during sign-up:", e);
-    res.status(500).json({ message: "Internal Server Error", error: e.message });
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: e.message });
   }
 });
 

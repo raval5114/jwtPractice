@@ -40,8 +40,15 @@ const authenticateToken = (req, res, next) => {
 };
 
 function generateToken(payload) {
-  return jwt.sign(payload, secretKey);
+  return jwt.sign(
+    { 
+      ...payload, 
+      iat: Math.floor(Date.now() / 1000)
+    },
+    secretKey
+  );
 }
+
 function jwtVerifyToken(token) {
   const decoded = jwt.verify(token, secretKey);
   return decoded;

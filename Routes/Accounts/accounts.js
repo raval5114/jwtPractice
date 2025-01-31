@@ -16,7 +16,6 @@ accounts.post("/accounts", authenticateToken, async (req, res) => {
   try {
     // Extract account details from the request body
     const { accountHolderName, mobileNo } = req.body;
-    console.log("\n", accountHolderName, "\n");
     // Ensure all required fields are provided (email, accountHolderName, mobileno)
     if (!accountHolderName || !mobileNo) {
       return res.status(400).json({ error: "Missing required fields." });

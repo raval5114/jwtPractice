@@ -1,4 +1,4 @@
-const express = require("express"); // Importing Express for creating the server
+      const express = require("express"); // Importing Express for creating the server
 const dotenv = require("dotenv"); // Importing dotenv for loading environment variables
 const mongoose = require("mongoose"); // Importing Mongoose for database interaction
 const cors = require("cors"); // Importing CORS middleware
@@ -7,6 +7,8 @@ const router = require("./Routes/router.js");
 const accounts = require("./Routes/Accounts/accounts.js");
 const transaction = require("./Routes/Transactions/transaction.js");
 const payment = require("./Routes/Payments/payments.js");
+const testing = require("./Routes/Auth/newSessionTryingApis.js");
+const session = require("express-session");
 
 // Setting up global variables
 dotenv.config();
@@ -38,7 +40,7 @@ app.use("/routes", router);
 app.use("/banks", accounts);
 app.use("/transactions", transaction);
 app.use("/payment", payment);
-
+app.use("/testing",testing);
 // Start the server and listen on the specified port
 app.listen(PORT, () => {
   console.log(`Server is started on http://localhost:${PORT}`);
