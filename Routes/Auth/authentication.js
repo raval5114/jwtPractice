@@ -104,7 +104,6 @@ auth.post("/signout", (req, res) => {
   }
 });
 
-// Route to handle user Sign-Up - register
 
 // Route to handle user Sign-Up - register
 auth.post("/Signup", async (req, res) => {
