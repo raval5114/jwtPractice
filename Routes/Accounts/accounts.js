@@ -55,7 +55,6 @@ accounts.get("/accounts", authenticateToken, async (req, res) => {
       .json({ message: "internal server error", error: e.message });
   }
   console.log("Getting Accounts Details");
-  res.send("Accounts Details Retrieved");
 });
 
 // GET /accounts/all - Get Every Account Details
