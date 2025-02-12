@@ -42,6 +42,9 @@ app.use("/transactions", transaction);
 app.use("/payment", payment);
 app.use("/testing",testing);
 // Start the server and listen on the specified port
+app.get("/test",(req,res)=>{
+  res.json({message:"Hari Raval"});
+})
 app.listen(PORT, () => {
   console.log(`Server is started on http://localhost:${PORT}`);
 });
