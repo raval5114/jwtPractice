@@ -142,6 +142,54 @@ accounts.post("/banks", async (req, res) => {
     });
   }
 });
+accounts.post("/verifyPin", authenticateToken, async (req, res) => {
+  const email = req.user.email;
+  const { pin } = req.body; 
 
+  if (!pin) {
+    return res.status(400).json({ message: "PIN is required!" });
+  }
+
+  try {
+    const user = await Accounts.findOne({ email });
+
+    if (!user || !user.pin) {
+      return res.status(404).json({ message: "User PIN not found!" });
+    }
+    if (user.pin != pin) {
+      return res.status(401).json({ message: "Invalid PIN!" });
+    }
+
+    res.status(200).json({ message: "PIN verified successfully!" });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Internal Server Error", error: e.message });
+  }
+});
+accounts.post("/setPin", authenticateToken, async (req, res) => {
+  const email = req.user.email;
+  const { newPin } = req.body;
+
+  if (!newPin || newPin.length !== 4) {
+    return res.status(400).json({ message: "Valid 4-digit PIN is required!" });
+  }
+
+  try {
+    const user = await Accounts.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found!" });
+    }
+
+    user.pin = newPin;
+
+    await user.save();
+
+    res.status(200).json({ message: "PIN set successfully!" });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Internal Server Error", error: e.message });
+  }
+});
 
 module.exports = accounts;
