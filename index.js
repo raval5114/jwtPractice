@@ -1,4 +1,4 @@
-      const express = require("express"); // Importing Express for creating the server
+const express = require("express"); // Importing Express for creating the server
 const dotenv = require("dotenv"); // Importing dotenv for loading environment variables
 const mongoose = require("mongoose"); // Importing Mongoose for database interaction
 const cors = require("cors"); // Importing CORS middleware
@@ -40,10 +40,10 @@ app.use("/routes", router);
 app.use("/banks", accounts);
 app.use("/transactions", transaction);
 app.use("/payment", payment);
-app.use("/testing",testing);
+app.use("/testing", testing);
 // Start the server and listen on the specified port
-app.get("/test",(req,res)=>{
-  res.json({message:"Hari Raval"});
+app.get("/test", (req, res) => {
+  res.json({ message: "Hari Raval" });
 })
 app.listen(PORT, () => {
   console.log(`Server is started on http://localhost:${PORT}`);

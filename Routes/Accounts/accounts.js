@@ -147,25 +147,26 @@ accounts.post("/verifyPin", authenticateToken, async (req, res) => {
   const { pin } = req.body; 
 
   if (!pin) {
-    return res.status(400).json({ message: "PIN is required!" });
+    return res.status(400).json({ success: false });
   }
 
   try {
     const user = await Accounts.findOne({ email });
 
     if (!user || !user.pin) {
-      return res.status(404).json({ message: "User PIN not found!" });
+      return res.status(404).json({ success: false });
     }
     if (user.pin != pin) {
-      return res.status(401).json({ message: "Invalid PIN!" });
+      return res.status(401).json({ success: false });
     }
 
-    res.status(200).json({ message: "PIN verified successfully!" });
+    res.status(200).json({ success: true });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ message: "Internal Server Error", error: e.message });
+    res.status(500).json({ success: false });
   }
 });
+
 accounts.post("/setPin", authenticateToken, async (req, res) => {
   const email = req.user.email;
   const { newPin } = req.body;
