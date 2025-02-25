@@ -4,7 +4,7 @@ const accountSchema = new mongoose.Schema({
   email: { type: String, required: true },
   accountHolderName: { type: String, required: true },
   mobileno: { type: Number, required: true },
-  pin:{type:Number,required:true},
+  pin: { type: Number, required: true },
   banks: [
     {
       bankName: String,
@@ -16,6 +16,6 @@ const accountSchema = new mongoose.Schema({
   ]
 });
 
-const Accounts = mongoose.model("Accounts", accountSchema,"Accounts");
+const Accounts = mongoose.model("Accounts", accountSchema, "Accounts");
 
 module.exports = Accounts;

@@ -17,7 +17,7 @@ const transactionSchema = new mongoose.Schema({
       bankType: {
         type: String,
         required: true,
-        enum: ["savings", "current", "loan"], // Predefined values for bank type
+        enum: ["savings", "current"], // Predefined values for bank type
       },
       time: { type: Date, required: true, default: Date.now }, // Default value
     },

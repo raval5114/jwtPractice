@@ -27,7 +27,7 @@ transaction.post("/", authenticateToken, async (req, res) => {
   }
 });
 
-transaction.patch("/", authenticateToken, async (req, res) => {
+transaction.post("/addTransaction", authenticateToken, async (req, res) => {
   const decodedEmail = req;
   const updates = req.body;
 
@@ -70,7 +70,7 @@ transaction.get("/", authenticateToken, async (req, res) => {
     }, []);
 
     // Respond with the consolidated transaction list
-    res.status(200).json({transactionsList });
+    res.status(200).json({ transactionsList });
   } catch (e) {
     console.error("Error fetching transactions:", e.message);
     res.status(500).json({ message: "Internal Server Error", error: e.message });
