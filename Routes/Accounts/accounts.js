@@ -142,9 +142,9 @@ accounts.post("/banks", async (req, res) => {
     });
   }
 });
-accounts.get("/verifyPin", authenticateToken, async (req, res) => {
+accounts.post("/verifyPin", authenticateToken, async (req, res) => {
   const email = req.user.email;
-  const { pin } = req.query; // Extract pin from query parameters
+  const { pin } = req.body;
 
   if (!pin) {
     return res.status(400).json({ success: false, message: "Pin is required." });
@@ -156,6 +156,9 @@ accounts.get("/verifyPin", authenticateToken, async (req, res) => {
     if (!user || !user.pin) {
       return res.status(404).json({ success: false, message: "User not found or PIN not set." });
     }
+
+    console.log(`Received PIN: ${pin}`);
+    console.log(`Stored PIN: ${user.pin}`);
 
     if (user.pin !== pin) {
       return res.status(401).json({ success: false, message: "Invalid PIN." });
@@ -238,7 +241,7 @@ accounts.post("/getAccountsByNumber", async (req, res) => {
           $regexMatch: { input: { $toString: "$mobileno" }, regex: numberStr, options: "i" }
         }
       },
-      { mobileno: 1, accountHolderName: 1, _id: 0 } // Project only required fields
+      { mobileno: 1, accountHolderName: 1, banks:1,_id: 0 } // Project only required fields
     );
 
     if (!listOfUsers.length) {

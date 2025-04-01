@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 // Define the transaction schema
 const transactionSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true, index: true }, // Ensures unique email and faster queries
+  mobileno: { type: Number, required: true, unique: true ,maxlength: 10},
   transactionList: [
     {
       title: { type: String, required: true, maxlength: 100 },
@@ -12,12 +12,12 @@ const transactionSchema = new mongoose.Schema({
       transactionType: {
         type: String,
         required: true,
-        enum: ["credit", "debit"], // Predefined values for transaction type
+        enum: ["Income", "Expense"], // Predefined values for transaction type
       },
       bankType: {
         type: String,
         required: true,
-        enum: ["savings", "current"], // Predefined values for bank type
+        enum: ["Savings", "Current"], // Predefined values for bank type
       },
       time: { type: Date, required: true, default: Date.now }, // Default value
     },

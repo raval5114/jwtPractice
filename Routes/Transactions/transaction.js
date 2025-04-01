@@ -27,7 +27,7 @@ transaction.post("/", authenticateToken, async (req, res) => {
   }
 });
 
-transaction.post("/addTransaction", authenticateToken, async (req, res) => {
+transaction.post("/addTransaction'", authenticateToken, async (req, res) => {
   const decodedEmail = req;
   const updates = req.body;
 
@@ -58,19 +58,20 @@ transaction.post("/addTransaction", authenticateToken, async (req, res) => {
   }
 });
 
-// GET - Fetch all transaction records from the Transaction collection
-transaction.get("/", authenticateToken, async (req, res) => {
+// POST - Fetch all transaction records from the Transaction from email
+transaction.post("/fetchTransactions", async (req, res) => {
   try {
-    // Fetch only the transactionList field from all documents
-    const transactions = await Transaction.find({}, "transactionList");
+    const mobileno = req.body.mobileno;
+    const userTransactions = await Transaction.findOne(
+        { mobileno: mobileno },
+        { transactionList: 1, _id: 0 } // Only fetch transactionList
+    );
 
-    // Combine all transactionList arrays into a single array
-    const transactionsList = transactions.reduce((acc, transaction) => {
-      return acc.concat(transaction.transactionList);
-    }, []);
-
-    // Respond with the consolidated transaction list
-    res.status(200).json({ transactionsList });
+    if (!userTransactions) {
+        return res.status(404).json({ message: "No transactions found" });
+    }
+    
+    res.json(userTransactions.transactionList);
   } catch (e) {
     console.error("Error fetching transactions:", e.message);
     res.status(500).json({ message: "Internal Server Error", error: e.message });
